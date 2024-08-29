@@ -11,7 +11,7 @@ fn main() {
     let args = env::args().collect::<Vec<String>>();
     let mut buffer = BufReader::new(io::stdin());
 
-    let plugin_version: f32 = parameter_parser::get_parameter(
+    let plugin_version: String = parameter_parser::get_parameter(
         args.as_slice(),
         1,
         &mut buffer,
@@ -30,8 +30,8 @@ fn main() {
 
     let application_parameter = builder
         .set_version(plugin_version)
-        .set_plugin_name(plugin_name.as_str())
-        .set_group_id(plugin_group_id.as_str())
+        .set_plugin_name(plugin_name)
+        .set_group_id(plugin_group_id)
         .build();
 
     println!("{:?}", application_parameter);
