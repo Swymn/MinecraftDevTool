@@ -1,6 +1,6 @@
 use std::{io, str::FromStr};
 
-pub fn get_parameter<R: io::BufRead, O: FromStr>(
+pub fn get_template_parameter<R: io::BufRead, O: FromStr>(
     args: &[String],
     index: usize,
     stdin: &mut R,
@@ -47,7 +47,7 @@ mod tests {
         let mut stdin = Cursor::new("\n");
 
         // WHEN we want to get the plugin version
-        let plugin_version: f32 = get_parameter(&args, 1, &mut stdin, INPUT_STRING);
+        let plugin_version: f32 = get_template_parameter(&args, 1, &mut stdin, INPUT_STRING);
 
         // THEN the version should be retruned
         assert_eq!(1.21, plugin_version);
@@ -65,7 +65,7 @@ mod tests {
         let mut stdin = Cursor::new("1.21\n");
 
         // WHEN we want to get the plugin version
-        let plugin_version: f32 = get_parameter(&args, 1, &mut stdin, INPUT_STRING);
+        let plugin_version: f32 = get_template_parameter(&args, 1, &mut stdin, INPUT_STRING);
 
         // THEN the plugin version should be retrieved from the user input
         assert_eq!(1.21, plugin_version);
@@ -79,7 +79,7 @@ mod tests {
         let mut stdin = Cursor::new("1.21\n");
 
         // WHEN we want to get the plugin version
-        let plugin_version: f32 = get_parameter(&args, 1, &mut stdin, INPUT_STRING);
+        let plugin_version: f32 = get_template_parameter(&args, 1, &mut stdin, INPUT_STRING);
 
         // THEN the plugin version should be retrieved from the user input
         assert_eq!(1.21, plugin_version);
@@ -93,7 +93,7 @@ mod tests {
         let mut stdin = Cursor::new("plugin_test\n1.21\n");
 
         // WHEN we want to get the plugin version
-        let plugin_name: f32 = get_parameter(&args, 1, &mut stdin, INPUT_STRING);
+        let plugin_name: f32 = get_template_parameter(&args, 1, &mut stdin, INPUT_STRING);
 
         // THEN the plugin version should be retrieved from the user input
         assert_eq!(1.21, plugin_name);
@@ -111,7 +111,7 @@ mod tests {
         let mut stdin = Cursor::new("\n");
 
         // WHEN we want to get the plugin version
-        let plugin_name: String = get_parameter(&args, 2, &mut stdin, INPUT_STRING);
+        let plugin_name: String = get_template_parameter(&args, 2, &mut stdin, INPUT_STRING);
 
         // THEN the version should be retruned
         assert_eq!(String::from("plugin_test"), plugin_name);
@@ -125,7 +125,7 @@ mod tests {
         let mut stdin = Cursor::new("plugin_test\n");
 
         // WHEN we want to get the plugin version
-        let plugin_name: String = get_parameter(&args, 2, &mut stdin, INPUT_STRING);
+        let plugin_name: String = get_template_parameter(&args, 2, &mut stdin, INPUT_STRING);
 
         // THEN the plugin version should be retrieved from the user input
         assert_eq!(String::from("plugin_test"), plugin_name);

@@ -1,2 +1,1 @@
-pub mod parameter;
-pub mod scaffold;
+pub mod domain;
