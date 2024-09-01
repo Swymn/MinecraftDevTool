@@ -3,7 +3,10 @@ use std::{
     io::{self, BufReader},
 };
 
-use minecraft_dev_tool::domain::{parser, plugin_template::{self, PluginTemplateBuilder}};
+use minecraft_dev_tool::domain::{
+    parser,
+    plugin_template::{self, PluginTemplateBuilder},
+};
 
 const PLUGIN_VERSION_PROMPT: &str = "Enter the plugin version:";
 const PLUGIN_NAME_PROMPT: &str = "Enter the plugin name:";
@@ -13,20 +16,12 @@ fn main() {
     let args = env::args().collect::<Vec<String>>();
     let mut buffer = BufReader::new(io::stdin());
 
-    let plugin_version: String = parser::get_template_parameter(
-        args.as_slice(),
-        1,
-        &mut buffer,
-        PLUGIN_VERSION_PROMPT,
-    );
+    let plugin_version: String =
+        parser::get_template_parameter(args.as_slice(), 1, &mut buffer, PLUGIN_VERSION_PROMPT);
     let plugin_name: String =
         parser::get_template_parameter(args.as_slice(), 2, &mut buffer, PLUGIN_NAME_PROMPT);
-    let plugin_group_id: String = parser::get_template_parameter(
-        args.as_slice(),
-        3,
-        &mut buffer,
-        GROUP_ID_PROMPT,
-    );
+    let plugin_group_id: String =
+        parser::get_template_parameter(args.as_slice(), 3, &mut buffer, GROUP_ID_PROMPT);
 
     let mut builder = plugin_template::DefaultPluginTemplateBuilder::default();
 
