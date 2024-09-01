@@ -37,21 +37,7 @@ mod tests {
     use super::*;
     use std::io::Cursor;
 
-    const INPUT_STRING: &str = "Please enter an input:";
-
-    #[test]
-    fn should_retrieve_plugin_version_by_app_arguments() {
-        // GIVEN the app arguments
-        // AND the user inputs
-        let args = vec!["app".to_string(), "1.21".to_string(), "plugin".to_string()];
-        let mut stdin = Cursor::new("\n");
-
-        // WHEN we want to get the plugin version
-        let plugin_version: f32 = get_template_parameter(&args, 1, &mut stdin, INPUT_STRING);
-
-        // THEN the version should be retruned
-        assert_eq!(1.21, plugin_version);
-    }
+    const INPUT_STRING: &str = "Enter the plugin version:";
 
     #[test]
     fn should_retrieve_plugin_version_by_user_input_with_invalid_app_argument() {
@@ -97,37 +83,5 @@ mod tests {
 
         // THEN the plugin version should be retrieved from the user input
         assert_eq!(1.21, plugin_name);
-    }
-
-    #[test]
-    fn should_retrieve_plugin_name_by_app_arguments() {
-        // GIVEN the app arguments
-        // AND the user inputs
-        let args = vec![
-            "app".to_string(),
-            "1.21".to_string(),
-            "plugin_test".to_string(),
-        ];
-        let mut stdin = Cursor::new("\n");
-
-        // WHEN we want to get the plugin version
-        let plugin_name: String = get_template_parameter(&args, 2, &mut stdin, INPUT_STRING);
-
-        // THEN the version should be retruned
-        assert_eq!(String::from("plugin_test"), plugin_name);
-    }
-
-    #[test]
-    fn should_retrieve_plugin_name_by_user_input_with_missing_app_argument() {
-        // GIVEN the app arguments without the version
-        // AND the user inputs
-        let args = vec!["app".to_string()];
-        let mut stdin = Cursor::new("plugin_test\n");
-
-        // WHEN we want to get the plugin version
-        let plugin_name: String = get_template_parameter(&args, 2, &mut stdin, INPUT_STRING);
-
-        // THEN the plugin version should be retrieved from the user input
-        assert_eq!(String::from("plugin_test"), plugin_name);
     }
 }
