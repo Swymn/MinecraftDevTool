@@ -1,18 +1,15 @@
-#[allow(dead_code)]
-fn get_template_generator(type_str: &str) -> TemplateGeneratorType {
+use spigot::SpigotTemplateGenerator;
+use template::TemplateGenerator;
+
+mod spigot;
+mod template;
+
+pub fn get_template_generator(type_str: &str) -> Box<dyn TemplateGenerator> {
     match type_str {
-        "spigot" => TemplateGeneratorType::Spigot(SpigotTemplateGenerator),
+        "spigot" => Box::new(SpigotTemplateGenerator::default()),
         _ => panic!("Unknown template generator type: {}", type_str),
     }
 }
-
-#[allow(dead_code)]
-enum TemplateGeneratorType {
-    Spigot(SpigotTemplateGenerator),
-}
-
-#[derive(Default)]
-struct SpigotTemplateGenerator;
 
 #[cfg(test)]
 mod tests {
@@ -27,6 +24,9 @@ mod tests {
         let result = get_template_generator(type_str);
 
         // THEN the result should be a SpigotTemplateGenerator;
-        assert!(matches!(result, TemplateGeneratorType::Spigot(_)));
+        assert!(result
+            .as_any()
+            .downcast_ref::<SpigotTemplateGenerator>()
+            .is_some());
     }
 }
