@@ -11,7 +11,10 @@ fn get_project_generator_type_should_return_spigot() {
 
     // THEN the project type might an instance of spigot
     assert!(project_generator.is_some());
-    assert!(matches!(project_generator, Some(ProjectGeneratorType::Spigot(_))));
+    assert!(matches!(
+        project_generator,
+        Some(ProjectGeneratorType::Spigot(_))
+    ));
 }
 
 #[test]
@@ -36,5 +39,8 @@ fn get_project_generator_type_should_spigot_for_unconventional_case() {
 
     // THEN the project type might an instance of spigot
     assert!(project_generator.is_some());
-    assert!(matches!(project_generator, Some(ProjectGeneratorType::Spigot(_))));
+    assert!(matches!(
+        project_generator,
+        Some(ProjectGeneratorType::Spigot(_))
+    ));
 }

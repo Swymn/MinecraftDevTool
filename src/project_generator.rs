@@ -1,5 +1,5 @@
-mod tests;
 mod spigot;
+mod tests;
 
 use spigot::SpigotGenerator;
 
