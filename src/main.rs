@@ -1,10 +1,16 @@
-use minecraft_dev_tool::get_template_generator;
+use minecraft_dev_tool::{get_project_type, ProjectGeneratorType};
 
 fn main() {
-    let template_generator = get_template_generator("spigot");
-    let result = template_generator.generate();
-    match result {
-        Ok(message) => println!("{}", message),
-        Err(e) => eprintln!("{}", e),
-    }
+	const GENERATOR: &str = "spigot";
+	let project_generator = get_project_type(GENERATOR);
+	
+	if let Some(project_generator) = project_generator {
+		match project_generator {
+			ProjectGeneratorType::Spigot(_) => {
+				println!("Spigot project generator selected");
+			}
+		}
+	} else {
+		eprintln!("Unable to determine the project generator");
+	}
 }
