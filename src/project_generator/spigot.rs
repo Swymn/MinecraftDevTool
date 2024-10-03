@@ -154,7 +154,8 @@ mod tests {
         spigot_generator.generate_project();
 
         // THEN the project folder should contain a pom.xml file
-        let project_path = Path::new(&spigot_generator.name);
+        let name_in_lowercase = spigot_generator.name.to_lowercase();
+        let project_path = Path::new(&name_in_lowercase);
         assert!(
             project_path.exists() && project_path.is_dir(),
             "Project folder does not exist"
@@ -189,7 +190,8 @@ mod tests {
         spigot_generator.generate_project();
 
         // THEN the project folder should contain a main java file
-        let project_path = Path::new(&spigot_generator.name);
+        let name_in_lowercase = spigot_generator.name.to_lowercase();
+        let project_path = Path::new(&name_in_lowercase);
         let plugin_yml_file_path = project_path.join("src/main/resources/plugin.yml");
         assert!(
             plugin_yml_file_path.exists() && plugin_yml_file_path.is_file(),
@@ -219,7 +221,8 @@ mod tests {
         spigot_generator.generate_project();
 
         // THEN the project folder should contain a main java file
-        let project_path = Path::new(&spigot_generator.name);
+        let name_in_lowercase = spigot_generator.name.to_lowercase();
+        let project_path = Path::new(&name_in_lowercase);
         let main_java_file_path = project_path.join("src/main/java/com/test/TestTwo.java");
         assert!(
             main_java_file_path.exists() && main_java_file_path.is_file(),
