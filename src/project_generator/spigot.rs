@@ -174,7 +174,7 @@ mod tests {
         assert_eq!(pom_xml_content, expected_pom_xml_content);
 
         // Clean up
-        clean_up(&spigot_generator.name);
+        clean_up(&name_in_lowercase);
     }
 
     #[test]
@@ -205,7 +205,7 @@ mod tests {
         assert_eq!(plugin_yml_content, expected_plugin_yml_content);
 
         // Clean up
-        clean_up(&spigot_generator.name);
+        clean_up(&name_in_lowercase);
     }
 
     #[test]
@@ -236,6 +236,6 @@ mod tests {
         assert_eq!(main_java_content, expected_main_java_content);
 
         // Clean up
-        clean_up(&spigot_generator.name);
+        clean_up(&name_in_lowercase);
     }
 }
