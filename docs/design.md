@@ -11,6 +11,10 @@ Here are the diagrams that show how the tool operates:
 	class ProjectGenerator {
 		+get_project_type(name: String) Option<ProjectGenertorType>
 	}
+	
+	class ParameterReader {
+        +read_parameters() Vec<\String\>
+    }
 
 	class ProjectGeneratorType {
 		<<enum>>
@@ -18,6 +22,7 @@ Here are the diagrams that show how the tool operates:
 	}
 	
 	MinecraftDevTools --> ProjectGenerator : Use
+	MinecraftDevTools --> ParameterReader : Use
     ProjectGenerator --> ProjectGeneratorType : Use
     ProjectGeneratorType --> SpigotGenerator : Call
 ```

@@ -13,7 +13,7 @@ fn get_project_generator_type_should_return_spigot() {
     assert!(project_generator.is_some());
     assert!(matches!(
         project_generator,
-        Some(ProjectGeneratorType::Spigot(_))
+        Some(ProjectGeneratorType::Spigot)
     ));
 }
 
@@ -41,6 +41,6 @@ fn get_project_generator_type_should_spigot_for_unconventional_case() {
     assert!(project_generator.is_some());
     assert!(matches!(
         project_generator,
-        Some(ProjectGeneratorType::Spigot(_))
+        Some(ProjectGeneratorType::Spigot)
     ));
 }
