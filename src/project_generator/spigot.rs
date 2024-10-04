@@ -15,7 +15,7 @@ impl SpigotGenerator {
             group_id,
         }
     }
-    
+
     fn get_valid_version(version: &str) -> String {
         String::from(match version {
             "1.4.6" => "1.4.6-R0.4-SNAPSHOT",
@@ -43,7 +43,7 @@ impl SpigotGenerator {
             "1.10.2" => "1.10.2-R0.1-SNAPSHOT-latest",
             _ => version,
         })
-    } 
+    }
 
     fn generate_file_content(&self, template: &str) -> String {
         template
@@ -267,15 +267,15 @@ mod tests {
         // Clean up
         clean_up(&name_in_lowercase);
     }
-    
+
     #[test]
     fn get_valid_version_should_return_valid_old_version() {
         // GIVEN a version
         let version = String::from("1.4.6");
-        
+
         // WHEN we get the valid version
         let valid_version = SpigotGenerator::get_valid_version(&version);
-        
+
         // THEN the version should be 1.4.6-R0.4-SNAPSHOT
         assert_eq!("1.4.6-R0.4-SNAPSHOT", valid_version);
     }
