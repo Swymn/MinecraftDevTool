@@ -49,7 +49,7 @@ impl SpigotGenerator {
         <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.source>21</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spigot.version>{version}</spigot.version>
+        <spigot.version>{version}-R0.1-SNAPSHOT</spigot.version>
     </properties>
     <repositories>
         <repository>
@@ -61,7 +61,7 @@ impl SpigotGenerator {
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>${spigot.version}-R0.1-SNAPSHOT</version>
+            <version>${spigot.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -83,7 +83,7 @@ public class {name} extends JavaPlugin {
     }
 
     @Override
-    public void onDisable() {{
+    public void onDisable() {
         getLogger().info("Goodbye, SpigotMC!");
     }
 }
