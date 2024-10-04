@@ -11,10 +11,39 @@ impl SpigotGenerator {
     pub fn new(name: String, version: String, group_id: String) -> Self {
         Self {
             name,
-            version,
+            version: Self::get_valid_version(&version),
             group_id,
         }
     }
+    
+    fn get_valid_version(version: &str) -> String {
+        String::from(match version {
+            "1.4.6" => "1.4.6-R0.4-SNAPSHOT",
+            "1.4.7" => "1.4.7-R1.1-SNAPSHOT",
+            "1.5.1" => "1.5.1-R0.1-SNAPSHOT",
+            "1.5.2" => "1.5.2-R1.1-SNAPSHOT",
+            "1.6.2" => "1.6.2-R1.1-SNAPSHOT",
+            "1.6.4" => "1.6.4-R2.1-SNAPSHOT",
+            "1.7.2" => "1.7.2-R0.4-SNAPSHOT-1339",
+            "1.7.5" => "1.7.5-R0.1-SNAPSHOT-1387",
+            "1.7.8" => "1.7.8-R0.1-SNAPSHOT",
+            "1.7.9" => "1.7.9-R0.2-SNAPSHOT",
+            "1.7.10" => "1.7.10-SNAPSHOT-b1657",
+            "1.8" => "1.8-R0.1-SNAPSHOT-latest",
+            "1.8.3" => "1.8.3-R0.1-SNAPSHOT-latest",
+            "1.8.4" => "1.8.4-R0.1-SNAPSHOT-latest",
+            "1.8.5" => "1.8.5-R0.1-SNAPSHOT-latest",
+            "1.8.6" => "1.8.6-R0.1-SNAPSHOT-latest",
+            "1.8.7" => "1.8.7-R0.1-SNAPSHOT-latest",
+            "1.8.8" => "1.8.8-R0.1-SNAPSHOT-latest",
+            "1.9" => "1.9-R0.1-SNAPSHOT-latest",
+            "1.9.2" => "1.9.2-R0.1-SNAPSHOT-latest",
+            "1.9.4" => "1.9.4-R0.1-SNAPSHOT-latest",
+            "1.10" => "1.10-R0.1-SNAPSHOT-latest",
+            "1.10.2" => "1.10.2-R0.1-SNAPSHOT-latest",
+            _ => version,
+        })
+    } 
 
     fn generate_file_content(&self, template: &str) -> String {
         template
@@ -146,7 +175,7 @@ mod tests {
         // GIVEN a spigot generator;
         let spigot_generator = SpigotGenerator::new(
             String::from("TestOne"),
-            String::from("1.0.0"),
+            String::from("1.8.8"),
             String::from("com.test"),
         );
 
@@ -182,7 +211,7 @@ mod tests {
         // GIVEN a spigot generator;
         let spigot_generator = SpigotGenerator::new(
             String::from("TestThree"),
-            String::from("1.0.0"),
+            String::from("1.21"),
             String::from("com.test"),
         );
 
@@ -213,7 +242,7 @@ mod tests {
         // GIVEN a spigot generator;
         let spigot_generator = SpigotGenerator::new(
             String::from("TestTwo"),
-            String::from("1.0.0"),
+            String::from("1.21"),
             String::from("com.test"),
         );
 
@@ -237,5 +266,17 @@ mod tests {
 
         // Clean up
         clean_up(&name_in_lowercase);
+    }
+    
+    #[test]
+    fn get_valid_version_should_return_valid_old_version() {
+        // GIVEN a version
+        let version = String::from("1.4.6");
+        
+        // WHEN we get the valid version
+        let valid_version = SpigotGenerator::get_valid_version(&version);
+        
+        // THEN the version should be 1.4.6-R0.4-SNAPSHOT
+        assert_eq!("1.4.6-R0.4-SNAPSHOT", valid_version);
     }
 }

@@ -39,6 +39,7 @@ jobs:
         with:
           tag_name: v${{ env.VERSION }}
           release_name: HanoiSolver v${{ env.VERSION }}
+          body: ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
   build-and-release-ubuntu:
