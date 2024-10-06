@@ -70,4 +70,16 @@ mod tests {
         // THEN the parameter should be 'toto'
         assert_eq!("toto", parameter);
     }
+
+    #[test]
+    fn get_parameters_should_return_empty_string_parameter() {
+        // GIVEN an empty string array
+        let mut args: Vec<String> = Vec::new();
+
+        // WHEN we call the get parameter function
+        let parameter = setup_test(&mut args, "\n");
+
+        // THEN the parameter should be an empty string
+        assert_eq!("", parameter);
+    }
 }

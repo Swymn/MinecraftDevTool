@@ -1,18 +1,20 @@
-use std::fs;
+use std::{env, fs};
 
 #[derive(Debug, PartialEq)]
 pub struct SpigotGenerator {
     name: String,
     version: String,
     group_id: String,
+    path: String,
 }
 
 impl SpigotGenerator {
-    pub fn new(name: String, version: String, group_id: String) -> Self {
+    pub fn new(name: String, version: String, group_id: String, path: String) -> Self {
         Self {
             name: Self::format_name(name),
             version,
             group_id,
+            path: Self::get_project_path(path),
         }
     }
 
@@ -110,6 +112,21 @@ author: Notch # Set yours
             .unwrap_or_else(|_| panic!("Unable to create directory at {}", path));
     }
 
+    fn get_project_path(path: String) -> String {
+        match path {
+            path if path.is_empty() => env::current_dir().unwrap().to_str().unwrap().to_string(),
+            path if path.starts_with("./") => {
+                let mut path = path.clone();
+                let current_dir = env::current_dir().unwrap().to_str().unwrap().to_string();
+                path = path.replace("./", "");
+                let project_path = format!("{}/{}", current_dir, path);
+
+                project_path
+            }
+            path => path,
+        }
+    }
+
     pub fn generate_project(&self) {
         // Create project dir
         let project_name = self.name.to_lowercase();
@@ -158,6 +175,7 @@ mod tests {
             String::from("TestOne"),
             String::from("1.8.8"),
             String::from("com.test"),
+            String::from("./test"),
         );
 
         // WHEN we generate the project
@@ -194,6 +212,7 @@ mod tests {
             String::from("TestThree"),
             String::from("1.21"),
             String::from("com.test"),
+            String::from("./test"),
         );
 
         // WHEN we generate the project
@@ -225,6 +244,7 @@ mod tests {
             String::from("TestTwo"),
             String::from("1.21"),
             String::from("com.test"),
+            String::from("./test"),
         );
 
         // WHEN we generate the project
@@ -259,5 +279,47 @@ mod tests {
 
         // THEN the name should look like so
         assert_eq!("EzezzEzfzeZefzeFfPofkj".to_string(), parsed_name)
+    }
+
+    #[test]
+    fn get_project_path_should_return_test_folder_path_from_relative_path() {
+        // GIVEN a path
+        let path = String::from("./test");
+
+        // WHEN we get the path
+        let path = SpigotGenerator::get_project_path(path);
+
+        // THEN the path should be this
+        assert_eq!(
+            format!("{}/test", env::current_dir().unwrap().to_str().unwrap()),
+            path
+        );
+    }
+
+    #[test]
+    fn get_project_path_should_return_test_folder_path_from_absolute_path() {
+        // GIVEN a path
+        let path = String::from("/test");
+
+        // WHEN we get the path
+        let path = SpigotGenerator::get_project_path(path);
+
+        // THEN the path should be this
+        assert_eq!("/test", path);
+    }
+
+    #[test]
+    fn get_project_path_should_return_absolute_path_empty_path() {
+        // GIVEN a path
+        let path = String::from("");
+
+        // WHEN we get the path
+        let path = SpigotGenerator::get_project_path(path);
+
+        // THEN the path should be this
+        assert_eq!(
+            format!("{}", env::current_dir().unwrap().to_str().unwrap()),
+            path
+        );
     }
 }
