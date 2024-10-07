@@ -1,3 +1,5 @@
+mod content_generator;
+mod file_operations;
 pub mod spigot;
 mod tests;
 
@@ -7,7 +9,6 @@ pub fn get_project_type(project_generator_type: &str) -> Option<ProjectGenerator
         _ => None,
     }
 }
-
 #[derive(Debug, PartialEq)]
 pub enum ProjectGeneratorType {
     Spigot,

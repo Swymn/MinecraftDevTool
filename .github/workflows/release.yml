@@ -166,12 +166,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Extract version from Cargo.toml
-        id: extract_version
-        run: |
-          $VERSION = (Select-String -Path Cargo.toml -Pattern '^version =').Matches.Groups[1].Value
-          echo "VERSION=$VERSION" >> $env:GITHUB_ENV
-
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -213,5 +207,5 @@ jobs:
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: ./target/release/minecraft-dev-tool.exe
-          asset_name: minecraft-dev-tool-windows-${{ env.VERSION }}.exe
+          asset_name: minecraft-dev-tool-windows.exe
           asset_content_type: application/octet-stream
