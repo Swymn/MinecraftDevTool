@@ -6,6 +6,9 @@ pub enum GeneratorError {
     #[error("Unable to determine the project generator")]
     UnableToDetermineProjectGenerator,
 
+    #[error("Unable to read a mandatory parameter")]
+    UnableToReadMandatoryParameter,
+
     #[error("Unable to create file: {0}")]
     FileCreationError(io::Error),
 

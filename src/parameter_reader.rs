@@ -13,11 +13,14 @@ pub fn get_parameters<B: io::BufRead>(
     args: &mut Vec<String>,
     buffer_reader: &mut B,
     input: &'static str,
-) -> String {
+    mandatory: bool,
+) -> Option<String> {
     if !args.is_empty() {
-        args.remove(0)
+        Some(args.remove(0))
+    } else if mandatory {
+        Some(get_user_input(buffer_reader, input))
     } else {
-        get_user_input(buffer_reader, input)
+        None
     }
 }
 
@@ -26,9 +29,9 @@ mod tests {
     use super::*;
     use std::io::Cursor;
 
-    fn setup_test(args: &mut Vec<String>, input: &str) -> String {
+    fn setup_test(args: &mut Vec<String>, input: &str, mandatory: bool) -> Option<String> {
         let mut buffer_reader = Cursor::new(input);
-        get_parameters(args, &mut buffer_reader, "")
+        get_parameters(args, &mut buffer_reader, "", mandatory)
     }
 
     #[test]
@@ -37,10 +40,10 @@ mod tests {
         let mut args = vec![String::from("toto")];
 
         // WHEN we call the get_parameter function
-        let parameter = setup_test(&mut args, "\n");
+        let parameter = setup_test(&mut args, "\n", true);
 
         // THEN the parameter returned should be 'toto'
-        assert_eq!("toto", parameter);
+        assert_eq!("toto", parameter.unwrap());
     }
 
     #[test]
@@ -53,10 +56,10 @@ mod tests {
         ];
 
         // WHEN we call the get_parameter function
-        let parameter = setup_test(&mut args, "\n");
+        let parameter = setup_test(&mut args, "\n", true);
 
         // THEN the parameter should be 'toto'
-        assert_eq!("toto", parameter)
+        assert_eq!("toto", parameter.unwrap());
     }
 
     #[test]
@@ -65,10 +68,10 @@ mod tests {
         let mut args: Vec<String> = Vec::new();
 
         // WHEN we call the get_parameter function
-        let parameter = setup_test(&mut args, "toto\n");
+        let parameter = setup_test(&mut args, "toto\n", true);
 
         // THEN the parameter should be 'toto'
-        assert_eq!("toto", parameter);
+        assert_eq!("toto", parameter.unwrap());
     }
 
     #[test]
@@ -77,9 +80,47 @@ mod tests {
         let mut args: Vec<String> = Vec::new();
 
         // WHEN we call the get parameter function
-        let parameter = setup_test(&mut args, "\n");
+        let parameter = setup_test(&mut args, "\n", true);
 
         // THEN the parameter should be an empty string
-        assert_eq!("", parameter);
+        assert_eq!("", parameter.unwrap());
+    }
+
+    #[test]
+    fn get_parameters_should_return_none_because_of_empty_args_and_not_mandatory() {
+        // GIVEN an empty args array
+        let mut args: Vec<String> = Vec::new();
+
+        // WHEN we call the get_parameter function
+        let parameter = setup_test(&mut args, "toto\n", false);
+
+        // THEN the parameter should be None
+        assert_eq!(None, parameter);
+    }
+
+    #[test]
+    fn get_parameters_should_return_none_because_of_empty_args_and_empty_buffer_and_not_mandatory()
+    {
+        // GIVEN an empty args array
+        let mut args: Vec<String> = Vec::new();
+
+        // WHEN we call the get_parameter function
+        let parameter = setup_test(&mut args, "\n", false);
+
+        // THEN the parameter should be None
+        assert_eq!(None, parameter);
+    }
+
+    #[test]
+    fn get_parameters_should_return_some_because_of_non_empty_args_and_not_mandatory() {
+        // GIVEN an empty args array
+        let mut args: Vec<String> = vec![String::from("toto")];
+
+        // WHEN we call the get_parameter function
+        let parameter = setup_test(&mut args, "\n", false);
+
+        // THEN the parameter should be None
+        assert!(parameter.is_some());
+        assert_eq!(Some(String::from("toto")), parameter);
     }
 }

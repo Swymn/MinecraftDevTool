@@ -18,7 +18,9 @@ pub fn execute<'a>() -> Result<&'a str, GeneratorError> {
         &mut args,
         &mut input_buffer,
         "Please provide the project type:",
-    );
+        true,
+    )
+    .ok_or(GeneratorError::UnableToDetermineProjectGenerator)?;
 
     let project_generator = get_project_type(&project_type);
 
@@ -29,25 +31,35 @@ pub fn execute<'a>() -> Result<&'a str, GeneratorError> {
                     &mut args,
                     &mut input_buffer,
                     "Please provide a name for your project",
-                );
+                    true,
+                )
+                .ok_or(GeneratorError::UnableToReadMandatoryParameter)?;
+                
                 let version = get_parameters(
                     &mut args,
                     &mut input_buffer,
                     "Please provide a version for your project",
-                );
+                    true,
+                )
+                .ok_or(GeneratorError::UnableToReadMandatoryParameter)?;
+                
                 let group_id = get_parameters(
                     &mut args,
                     &mut input_buffer,
                     "Please provide a group id for your project",
-                );
+                    true,
+                )
+                .ok_or(GeneratorError::UnableToReadMandatoryParameter)?;
+                
                 let path = get_parameters(
                     &mut args,
                     &mut input_buffer,
                     "Please provide a path for your project, leave empty for current directory",
+                    false,
                 );
 
                 let spigot_generator = SpigotGenerator::new(name, version, group_id, path);
-
+                
                 spigot_generator.generate_project()?;
                 Ok("Project generated!")
             }
