@@ -34,7 +34,7 @@ pub fn execute<'a>() -> Result<&'a str, GeneratorError> {
                     true,
                 )
                 .ok_or(GeneratorError::UnableToReadMandatoryParameter)?;
-                
+
                 let version = get_parameters(
                     &mut args,
                     &mut input_buffer,
@@ -42,7 +42,7 @@ pub fn execute<'a>() -> Result<&'a str, GeneratorError> {
                     true,
                 )
                 .ok_or(GeneratorError::UnableToReadMandatoryParameter)?;
-                
+
                 let group_id = get_parameters(
                     &mut args,
                     &mut input_buffer,
@@ -50,7 +50,7 @@ pub fn execute<'a>() -> Result<&'a str, GeneratorError> {
                     true,
                 )
                 .ok_or(GeneratorError::UnableToReadMandatoryParameter)?;
-                
+
                 let path = get_parameters(
                     &mut args,
                     &mut input_buffer,
@@ -59,7 +59,7 @@ pub fn execute<'a>() -> Result<&'a str, GeneratorError> {
                 );
 
                 let spigot_generator = SpigotGenerator::new(name, version, group_id, path);
-                
+
                 spigot_generator.generate_project()?;
                 Ok("Project generated!")
             }
