@@ -1,5 +1,8 @@
 use minecraft_dev_tool::execute;
 
 fn main() {
-    execute();
+    match execute() {
+        Ok(message) => println!("{}", message),
+        Err(error) => eprintln!("{}", error),
+    }
 }

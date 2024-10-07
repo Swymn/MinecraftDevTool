@@ -1,4 +1,10 @@
-use std::{env, fs};
+use std::env;
+
+use crate::errors::GeneratorError;
+use crate::project_generator::content_generator::{
+    generate_main_java_content, generate_plugin_yml_content, generate_pom_xml_content,
+};
+use crate::project_generator::file_operations::{create_directory, create_file};
 
 #[derive(Debug, PartialEq)]
 pub struct SpigotGenerator {
@@ -28,141 +34,52 @@ impl SpigotGenerator {
             .collect()
     }
 
-    fn generate_file_content(&self, template: &str) -> String {
-        template
-            .replace("{name}", &self.name)
-            .replace("{version}", &self.version)
-            .replace("{group_id}", &self.group_id)
-    }
-
-    fn generate_pom_xml_content(&self) -> String {
-        self.generate_file_content(r#"<?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>{group_id}</groupId>
-    <artifactId>{name}</artifactId>
-    <version>1.0.0</version>
-    <packaging>jar</packaging>
-    <name>{name}</name>
-    <description>Test project</description>
-    <properties>
-        <maven.compiler.target>21</maven.compiler.target>
-        <maven.compiler.source>21</maven.compiler.source>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spigot.version>{version}-R0.1-SNAPSHOT</spigot.version>
-    </properties>
-    <repositories>
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
-    <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>${spigot.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-</project>
-        "#)
-    }
-
-    fn generate_main_java_content(&self) -> String {
-        self.generate_file_content(
-            r#"package {group_id};
-
-import org.bukkit.plugin.java.JavaPlugin;
-
-public class {name} extends JavaPlugin {
-
-    @Override
-    public void onEnable() {
-        getLogger().info("Hello, SpigotMC!");
-    }
-
-    @Override
-    public void onDisable() {
-        getLogger().info("Goodbye, SpigotMC!");
-    }
-}
-        "#,
-        )
-    }
-
-    fn generate_plugin_yml_content(&self) -> String {
-        self.generate_file_content(
-            r#"name: {name}
-version: 1.0
-main: {group_id}.{name}
-author: Notch # Set yours
-        "#,
-        )
-    }
-
-    fn create_file(&self, path: &str, content: &str) {
-        fs::write(path, content).unwrap_or_else(|_| panic!("Unable to create file at {}", path));
-    }
-
-    fn create_directory(&self, path: &str) {
-        fs::create_dir_all(path)
-            .unwrap_or_else(|_| panic!("Unable to create directory at {}", path));
-    }
-
     fn get_project_path(path: String) -> String {
         match path {
             path if path.is_empty() => env::current_dir().unwrap().to_str().unwrap().to_string(),
             path if path.starts_with("./") => {
-                let mut path = path.clone();
                 let current_dir = env::current_dir().unwrap().to_str().unwrap().to_string();
-                path = path.replace("./", "");
-                let project_path = format!("{}/{}", current_dir, path);
-
-                project_path
+                format!("{}/{}", current_dir, path.trim_start_matches("./"))
             }
             path => path,
         }
     }
 
-    pub fn generate_project(&self) {
-        // Create project dir
+    pub fn generate_project(&self) -> Result<(), GeneratorError> {
         let project_name = self.name.to_lowercase();
-        self.create_directory(&project_name);
+        create_directory(&project_name)?;
 
-        // Create pom.xml file
-        self.create_file(
+        create_file(
             &format!("{}/pom.xml", project_name),
-            &self.generate_pom_xml_content(),
-        );
+            &generate_pom_xml_content(&self.name, &self.version, &self.group_id),
+        )?;
 
-        // Create plugin.yml file
         let resources_path = format!("{}/src/main/resources", project_name);
-        self.create_directory(&resources_path);
-        self.create_file(
+        create_directory(&resources_path)?;
+        create_file(
             &format!("{}/plugin.yml", resources_path),
-            &self.generate_plugin_yml_content(),
-        );
+            &generate_plugin_yml_content(&self.name, &self.group_id),
+        )?;
 
-        // Create main java file
         let java_path = format!(
             "{}/src/main/java/{}",
             project_name,
             self.group_id.replace(".", "/")
         );
-        self.create_directory(&java_path);
-        self.create_file(
+        create_directory(&java_path)?;
+        create_file(
             &format!("{}/{}.java", java_path, self.name),
-            &self.generate_main_java_content(),
-        );
+            &generate_main_java_content(&self.name, &self.group_id),
+        )?;
+
+        Ok(())
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
     use std::path::Path;
 
     fn clean_up(folder_name: &str) {
@@ -179,9 +96,11 @@ mod tests {
         );
 
         // WHEN we generate the project
-        spigot_generator.generate_project();
+        let result = spigot_generator.generate_project();
 
         // THEN the project folder should contain a pom.xml file
+        assert!(result.is_ok(), "Project generation failed");
+
         let name_in_lowercase = spigot_generator.name.to_lowercase();
         let project_path = Path::new(&name_in_lowercase);
         assert!(
@@ -198,7 +117,11 @@ mod tests {
         // AND the content of the pom.xml file should be the same as the one generated
         let pom_xml_content =
             fs::read_to_string(pom_file_path).expect("Unable to read pom.xml file");
-        let expected_pom_xml_content = spigot_generator.generate_pom_xml_content();
+        let expected_pom_xml_content = generate_pom_xml_content(
+            &spigot_generator.name,
+            &spigot_generator.version,
+            &spigot_generator.group_id,
+        );
         assert_eq!(pom_xml_content, expected_pom_xml_content);
 
         // Clean up
@@ -216,9 +139,11 @@ mod tests {
         );
 
         // WHEN we generate the project
-        spigot_generator.generate_project();
+        let result = spigot_generator.generate_project();
 
         // THEN the project folder should contain a main java file
+        assert!(result.is_ok(), "Project generation failed");
+
         let name_in_lowercase = spigot_generator.name.to_lowercase();
         let project_path = Path::new(&name_in_lowercase);
         let plugin_yml_file_path = project_path.join("src/main/resources/plugin.yml");
@@ -230,7 +155,8 @@ mod tests {
         // AND the content of the main java file should be the same as the one generated
         let plugin_yml_content =
             fs::read_to_string(plugin_yml_file_path).expect("Unable to read plugin.yml file");
-        let expected_plugin_yml_content = spigot_generator.generate_plugin_yml_content();
+        let expected_plugin_yml_content =
+            generate_plugin_yml_content(&spigot_generator.name, &spigot_generator.group_id);
         assert_eq!(plugin_yml_content, expected_plugin_yml_content);
 
         // Clean up
@@ -248,9 +174,11 @@ mod tests {
         );
 
         // WHEN we generate the project
-        spigot_generator.generate_project();
+        let result = spigot_generator.generate_project();
 
         // THEN the project folder should contain a main java file
+        assert!(result.is_ok(), "Project generation failed");
+
         let name_in_lowercase = spigot_generator.name.to_lowercase();
         let project_path = Path::new(&name_in_lowercase);
         let main_java_file_path = project_path.join("src/main/java/com/test/TestTwo.java");
@@ -262,7 +190,8 @@ mod tests {
         // AND the content of the main java file should be the same as the one generated
         let main_java_content =
             fs::read_to_string(main_java_file_path).expect("Unable to read main java file");
-        let expected_main_java_content = spigot_generator.generate_main_java_content();
+        let expected_main_java_content =
+            generate_main_java_content(&spigot_generator.name, &spigot_generator.group_id);
         assert_eq!(main_java_content, expected_main_java_content);
 
         // Clean up
