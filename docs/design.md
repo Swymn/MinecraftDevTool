@@ -20,12 +20,13 @@ Here are the diagrams that show how the tool operates:
         DirectoryCreationError,
     }
     
-    class ParameterReader {
-        +get_parameters() Option<\String\>
+    class Cli {
+        +get_next_parameter(input: &'static str, mandatory: bool) Option<\String\>
+        +with_server() bool
     }
     
     class ProjectGenerator {
-        +get_project_type(name: String) Option<ProjectGenertorType>
+        +get_project_type(name: String) Option<\ProjectGenertorType\>
     }
     
     class ContentGenerator {
@@ -50,13 +51,11 @@ Here are the diagrams that show how the tool operates:
     }
 	
 	MinecraftDevTools --> ProjectGenerator : Use
-	MinecraftDevTools --> ParameterReader : Use
+	MinecraftDevTools --> Cli : Use
     ProjectGenerator --> ProjectGeneratorType : Use
     ProjectGeneratorType --> SpigotGenerator : Call
     SpigotGenerator --> ContentGenerator : Use
     SpigotGenerator --> FileOperation : Use
     
     FileOperation --> GeneratorError : Generate
-    ParameterReader --> GeneratorError : Generate
-    
 ```
