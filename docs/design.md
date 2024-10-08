@@ -8,21 +8,55 @@ Here are the diagrams that show how the tool operates:
 
 ```mermaid
 	classDiagram
-	class ProjectGenerator {
-		+get_project_type(name: String) Option<ProjectGenertorType>
-	}
-	
-	class ParameterReader {
-        +read_parameters() Vec<\String\>
+    class MinecraftDevTools {
+        +run() Result<(), String>
     }
-
-	class ProjectGeneratorType {
-		<<enum>>
-		+ Spigot: SpigotGenerator
-	}
+    
+    class GeneratorError {
+        <<enum>>
+        UnableToDetermineProjectGenerator,
+        UnableToReadMandatoryParameter,
+        FileCreationError,
+        DirectoryCreationError,
+    }
+    
+    class ParameterReader {
+        +get_parameters() Option<\String\>
+    }
+    
+    class ProjectGenerator {
+        +get_project_type(name: String) Option<ProjectGenertorType>
+    }
+    
+    class ContentGenerator {
+        +generate_pom_xml_content(name: &str, version: &str, group_id: &str) -> String
+        +generate_main_java_content(name: &str, group_id: &str) -> String
+        +generate_plugin_yml_content(name: &str, group_id: &str) -> String
+    }
+    
+    class FileOperation {
+        +create_file(path: &str, content: &str) Result<(), GeneratorError>
+        +create_directory(path: &str) Result<(), GeneratorError>
+    }
+    
+    class SpigotGenerator {
+        +new(name: String, version: String, group_id: String, path: Option<String>) -> Self
+        +generate_project(&self) -> Result<(), GeneratorError>
+    }
+    
+    class ProjectGeneratorType {
+        <<enum>>
+        Spigot,
+    }
 	
 	MinecraftDevTools --> ProjectGenerator : Use
 	MinecraftDevTools --> ParameterReader : Use
     ProjectGenerator --> ProjectGeneratorType : Use
     ProjectGeneratorType --> SpigotGenerator : Call
+    SpigotGenerator --> ContentGenerator : Use
+    SpigotGenerator --> FileOperation : Use
+    
+    FileOperation --> GeneratorError : Generate
+    ParameterReader --> GeneratorError : Generate
+    
 ```

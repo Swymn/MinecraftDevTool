@@ -9,7 +9,7 @@ fn get_user_input<B: io::BufRead>(buffer_reader: &mut B, input: &'static str) ->
     user_input.trim().to_string()
 }
 
-pub fn get_parameters<B: io::BufRead>(
+pub fn get_parameter<B: io::BufRead>(
     args: &mut Vec<String>,
     buffer_reader: &mut B,
     input: &'static str,
@@ -31,7 +31,7 @@ mod tests {
 
     fn setup_test(args: &mut Vec<String>, input: &str, mandatory: bool) -> Option<String> {
         let mut buffer_reader = Cursor::new(input);
-        get_parameters(args, &mut buffer_reader, "", mandatory)
+        get_parameter(args, &mut buffer_reader, "", mandatory)
     }
 
     #[test]

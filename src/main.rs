@@ -1,7 +1,7 @@
-use minecraft_dev_tool::execute;
+use minecraft_dev_tool::run;
 
 fn main() {
-    match execute() {
+    match run() {
         Ok(message) => println!("{}", message),
         Err(error) => eprintln!("{}", error),
     }
