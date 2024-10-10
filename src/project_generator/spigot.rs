@@ -55,7 +55,7 @@ impl SpigotGenerator {
         create_directory(&project_path)?;
 
         create_file(
-            &format!("{}/pom.xml",  project_path),
+            &format!("{}/pom.xml", project_path),
             &generate_pom_xml_content(&self.name, &self.version, &self.group_id),
         )?;
 
