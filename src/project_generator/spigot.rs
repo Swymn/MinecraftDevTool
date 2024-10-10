@@ -107,7 +107,8 @@ mod tests {
         assert!(result.is_ok(), "Project generation failed");
 
         let name_in_lowercase = spigot_generator.name.to_lowercase();
-        let project_path = Path::new(&name_in_lowercase);
+        let project_path_name = &format!("{}/{}", spigot_generator.path, name_in_lowercase);
+        let project_path = Path::new(&project_path_name);
         assert!(
             project_path.exists() && project_path.is_dir(),
             "Project folder does not exist"
@@ -130,7 +131,7 @@ mod tests {
         assert_eq!(pom_xml_content, expected_pom_xml_content);
 
         // Clean up
-        clean_up(&name_in_lowercase);
+        clean_up(&project_path_name);
     }
 
     #[test]
@@ -150,7 +151,8 @@ mod tests {
         assert!(result.is_ok(), "Project generation failed");
 
         let name_in_lowercase = spigot_generator.name.to_lowercase();
-        let project_path = Path::new(&name_in_lowercase);
+        let project_path_name = &format!("{}/{}", spigot_generator.path, name_in_lowercase);
+        let project_path = Path::new(&project_path_name);
         let plugin_yml_file_path = project_path.join("src/main/resources/plugin.yml");
         assert!(
             plugin_yml_file_path.exists() && plugin_yml_file_path.is_file(),
@@ -165,7 +167,7 @@ mod tests {
         assert_eq!(plugin_yml_content, expected_plugin_yml_content);
 
         // Clean up
-        clean_up(&name_in_lowercase);
+        clean_up(&project_path_name);
     }
 
     #[test]
@@ -185,7 +187,8 @@ mod tests {
         assert!(result.is_ok(), "Project generation failed");
 
         let name_in_lowercase = spigot_generator.name.to_lowercase();
-        let project_path = Path::new(&name_in_lowercase);
+        let project_path_name = &format!("{}/{}", spigot_generator.path, name_in_lowercase);
+        let project_path = Path::new(&project_path_name);
         let main_java_file_path = project_path.join("src/main/java/com/test/TestTwo.java");
         assert!(
             main_java_file_path.exists() && main_java_file_path.is_file(),
@@ -200,7 +203,7 @@ mod tests {
         assert_eq!(main_java_content, expected_main_java_content);
 
         // Clean up
-        clean_up(&name_in_lowercase);
+        clean_up(&project_path_name);
     }
 
     #[test]
