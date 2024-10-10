@@ -6,7 +6,6 @@ use crate::project_generator::content_generator::{
 };
 use crate::project_generator::file_operations::{create_directory, create_file};
 
-#[derive(Debug, PartialEq)]
 pub struct SpigotGenerator {
     name: String,
     version: String,
@@ -52,14 +51,15 @@ impl SpigotGenerator {
 
     pub fn generate_project(&self) -> Result<(), GeneratorError> {
         let project_name = self.name.to_lowercase();
-        create_directory(&project_name)?;
+        let project_path = format!("{}/{}", self.path, project_name);
+        create_directory(&project_path)?;
 
         create_file(
-            &format!("{}/pom.xml", project_name),
+            &format!("{}/pom.xml",  project_path),
             &generate_pom_xml_content(&self.name, &self.version, &self.group_id),
         )?;
 
-        let resources_path = format!("{}/src/main/resources", project_name);
+        let resources_path = format!("{}/src/main/resources", project_path);
         create_directory(&resources_path)?;
         create_file(
             &format!("{}/plugin.yml", resources_path),
@@ -68,7 +68,7 @@ impl SpigotGenerator {
 
         let java_path = format!(
             "{}/src/main/java/{}",
-            project_name,
+            project_path,
             self.group_id.replace(".", "/")
         );
         create_directory(&java_path)?;

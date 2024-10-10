@@ -9,7 +9,7 @@ Here are the diagrams that show how the tool operates:
 ```mermaid
 	classDiagram
     class MinecraftDevTools {
-        +run() Result<(), String>
+        +run() Result<\String, GeneratorError>
     }
     
     class GeneratorError {
