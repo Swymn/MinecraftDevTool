@@ -2,6 +2,7 @@ mod content_generator;
 mod file_operations;
 pub mod spigot;
 mod tests;
+mod spigot_server;
 
 pub fn get_project_type(project_generator_type: &str) -> Option<ProjectGeneratorType> {
     match project_generator_type.to_lowercase().as_str() {

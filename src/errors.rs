@@ -14,4 +14,7 @@ pub enum GeneratorError {
 
     #[error("Unable to create directory: {0}")]
     DirectoryCreationError(io::Error),
+
+	#[error("Unable to download file: {0}")]
+	DownloadError(reqwest::Error),
 }
